@@ -16,6 +16,7 @@ contactActionStyles.href = "/contact-actions.css";
 document.head.appendChild(contactActionStyles);
 document.body.dataset.page = window.location.pathname.split("/").filter(Boolean).join("-") || "home";
 
+const navLinks = document.querySelector(".nav-links");
 const sitaraPhoneUrl = "tel:+917615050099";
 const sitaraWhatsAppUrl = "https://wa.me/917615050099?text=Hello%20Sitara%20Group%20Buildestate%2C%20I%20would%20like%20to%20know%20more%20about%20your%20residential%20projects.";
 const headerCta = document.querySelector(".nav-cta");
@@ -42,7 +43,6 @@ document.body.appendChild(floatingActions);
 
 const header = document.querySelector("[data-header]");
 const menuToggle = document.querySelector(".menu-toggle");
-const navLinks = document.querySelector(".nav-links");
 
 function syncHeader() {
   if (!header) return;

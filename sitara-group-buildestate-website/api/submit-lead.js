@@ -98,14 +98,31 @@ async function isDuplicate(lead) {
   return Array.isArray(rows) && rows.length > 0;
 }
 
+function getEmailDetails(message) {
+  const parts = String(message || "").split(/\n\n+/);
+  const fields = { message: parts.shift() || "", enquiryType: "Not provided", timeline: "Not provided" };
+
+  parts.forEach((part) => {
+    const [label, ...value] = part.split(":");
+    const text = value.join(":").trim();
+    if (label === "Enquiry Type" && text) fields.enquiryType = text;
+    if (label === "Visit Timeline" && text) fields.timeline = text;
+  });
+
+  return fields;
+}
+
 function buildEmail(lead, createdAt) {
+  const details = getEmailDetails(lead.message);
   const rows = [
     ["Name", lead.name],
     ["Phone", lead.phone],
     ["Email", lead.email],
     ["Project", lead.project],
     ["Budget", lead.budget],
-    ["Message", lead.message],
+    ["Message", details.message],
+    ["Enquiry Type", details.enquiryType],
+    ["Visit Timeline", details.timeline],
     ["Date & Time", new Date(createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })],
     ["Website Page", lead.source_page]
   ];
@@ -119,22 +136,38 @@ function buildEmail(lead, createdAt) {
       </tr>`;
   }).join("");
 
-  return `
-    <div style="margin:0;padding:24px;background:#f7f5ef;font-family:Arial,sans-serif;color:#111827;">
-      <div style="max-width:680px;margin:0 auto;background:#fff;border:1px solid #eadfca;">
-        <div style="padding:24px;background:#0a0a0a;color:#fff;">
-          <h1 style="margin:0;font-size:24px;">New Lead - Sitara Group Buildestate</h1>
-          <p style="margin:8px 0 0;color:#d6b978;">A new enquiry was submitted from the website.</p>
-        </div>
-        <table role="presentation" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;">${bodyRows}</table>
-        <div style="padding:18px 24px;color:#6b7280;font-size:13px;">This email was generated automatically from the Sitara Group Buildestate website.</div>
-      </div>
-    </div>`;
+  return `<!doctype html>
+    <html lang="en"><body style="margin:0;padding:0;background:#f4f1ea;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background:#f4f1ea;font-family:Arial,Helvetica,sans-serif;">
+        <tr><td align="center" style="padding:24px 12px;">
+          <table role="presentation" width="680" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:680px;background:#ffffff;border:1px solid #ded5c5;">
+            <tr><td style="padding:26px 28px;background:#111714;border-bottom:3px solid #c9a15c;">
+              <img src="https://www.sitara-group.in/assets/sitara-logo.jpeg" width="72" height="72" alt="Sitara Group Buildestate" style="display:block;width:72px;height:72px;max-width:72px;border:0;outline:none;text-decoration:none;background:#ffffff;" />
+              <p style="margin:20px 0 0;color:#ffffff;font-family:Georgia,Times New Roman,serif;font-size:26px;line-height:1.2;font-weight:normal;">New Lead - Sitara Group Buildestate</p>
+              <p style="margin:8px 0 0;color:#e2c895;font-size:14px;line-height:1.5;">A new enquiry was submitted from the website.</p>
+            </td></tr>
+            <tr><td style="padding:0;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;">${bodyRows}</table>
+            </td></tr>
+            <tr><td style="padding:20px 28px;background:#fbfaf7;color:#6b6b65;font-size:12px;line-height:1.5;border-top:1px solid #ece7dc;">This email was generated automatically from the Sitara Group Buildestate website.</td></tr>
+          </table>
+        </td></tr>
+      </table>
+    </body></html>`;
 }
 
 async function sendEmail(lead, createdAt) {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) throw new Error("Resend API key is missing.");
+  const from = process.env.RESEND_FROM_EMAIL;
+  const notificationEmail = clean(process.env.LEAD_NOTIFICATION_EMAIL, 254).toLowerCase();
+  const to = EMAIL_TO;
+  if (!apiKey || !from || !notificationEmail) {
+    const missing = [!apiKey && "RESEND_API_KEY", !from && "RESEND_FROM_EMAIL", !notificationEmail && "LEAD_NOTIFICATION_EMAIL"].filter(Boolean);
+    throw new Error(`Resend is not configured: missing ${missing.join(", ")}.`);
+  }
+  if (notificationEmail !== EMAIL_TO) {
+    throw new Error(`LEAD_NOTIFICATION_EMAIL must be configured as ${EMAIL_TO}.`);
+  }
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -143,15 +176,23 @@ async function sendEmail(lead, createdAt) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      from: process.env.RESEND_FROM_EMAIL || "Sitara Group Buildestate <onboarding@resend.dev>",
-      to: process.env.LEAD_NOTIFICATION_EMAIL || EMAIL_TO,
+      from,
+      to,
       subject: "🚀 New Lead - Sitara Group Buildestate",
       html: buildEmail(lead, createdAt)
     })
   });
 
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.message || "Email notification failed.");
+  const responseText = await response.text();
+  let data = {};
+  try { data = responseText ? JSON.parse(responseText) : {}; } catch { data = { responseText }; }
+  if (!response.ok) {
+    const message = data?.message || data?.name || "Email notification failed.";
+    const error = new Error(message);
+    error.resendStatus = response.status;
+    error.resendResponse = data;
+    throw error;
+  }
   return data;
 }
 
@@ -178,9 +219,21 @@ module.exports = async function handler(req, res) {
     });
 
     const createdAt = inserted?.[0]?.created_at || new Date().toISOString();
-    await sendEmail(lead, createdAt);
+    let notificationSent = true;
+    try {
+      const email = await sendEmail(lead, createdAt);
+      console.info("Lead notification accepted by Resend", { leadId: inserted?.[0]?.id, resendEmailId: email?.id });
+    } catch (emailError) {
+      notificationSent = false;
+      console.error("Lead saved but Resend notification failed", {
+        leadId: inserted?.[0]?.id,
+        resendStatus: emailError?.resendStatus || null,
+        resendResponse: emailError?.resendResponse || null,
+        message: emailError?.message || "Unknown Resend error"
+      });
+    }
 
-    return json(res, 200, { ok: true, message: "Thank you! Our team will contact you shortly." });
+    return json(res, 200, { ok: true, notificationSent, message: "Thank you! Our team will contact you shortly." });
   } catch (error) {
     console.error("Lead submission failed", error);
     return json(res, 500, { ok: false, message: "Unable to submit right now. Please try again shortly." });

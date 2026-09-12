@@ -79,3 +79,11 @@ Lead flow:
 - Duplicate email + phone submissions are blocked for 5 minutes.
 - The lead is inserted into Supabase using the server-only service role key.
 - Resend sends the HTML notification to `sitaragroupbuildestate@gmail.com`.
+
+## Resend delivery diagnostics
+
+The API saves the lead in Supabase before attempting the Resend notification. If Resend rejects or cannot accept a notification, the saved enquiry remains intact and Vercel logs a `Lead saved but Resend notification failed` event with the Resend HTTP status and non-secret response details.
+
+For reliable delivery, set all five environment variables in the Vercel production environment. `RESEND_FROM_EMAIL` must be a sender identity that is verified in the connected Resend account (for example, a verified `@sitara-group.in` address when that domain has been verified). Do not use or commit an unverified sender address.
+
+The Sitara logo inside the email body is hosted at `https://www.sitara-group.in/assets/sitara-logo.jpeg`. Gmail's sender avatar is managed separately by the sending domain/account. To display a branded sender avatar in supported inboxes, the sender domain owner must configure DMARC and BIMI with a verified mark certificate; this is a DNS/domain-administration task and requires no repository secrets.
