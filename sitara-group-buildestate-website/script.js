@@ -1,3 +1,45 @@
+const premiumStyles = document.createElement("link");
+premiumStyles.rel = "stylesheet";
+premiumStyles.href = "/premium.css";
+document.head.appendChild(premiumStyles);
+const criticalStyles = document.createElement("link");
+criticalStyles.rel = "stylesheet";
+criticalStyles.href = "/critical-design-fixes.css";
+document.head.appendChild(criticalStyles);
+const leadershipStyles = document.createElement("link");
+leadershipStyles.rel = "stylesheet";
+leadershipStyles.href = "/leadership-image-fix.css";
+document.head.appendChild(leadershipStyles);
+const contactActionStyles = document.createElement("link");
+contactActionStyles.rel = "stylesheet";
+contactActionStyles.href = "/contact-actions.css";
+document.head.appendChild(contactActionStyles);
+document.body.dataset.page = window.location.pathname.split("/").filter(Boolean).join("-") || "home";
+
+const sitaraPhoneUrl = "tel:+917615050099";
+const sitaraWhatsAppUrl = "https://wa.me/917615050099?text=Hello%20Sitara%20Group%20Buildestate%2C%20I%20would%20like%20to%20know%20more%20about%20your%20residential%20projects.";
+const headerCta = document.querySelector(".nav-cta");
+if (headerCta) {
+  const callAction = document.createElement("a");
+  callAction.className = "header-call-action";
+  callAction.href = sitaraPhoneUrl;
+  callAction.setAttribute("aria-label", "Call Sitara Group at +91 76150 50099");
+  callAction.innerHTML = "Call <span>+91 76150 50099</span>";
+  headerCta.before(callAction);
+} else if (navLinks) {
+  const callAction = document.createElement("a");
+  callAction.className = "header-call-action";
+  callAction.href = sitaraPhoneUrl;
+  callAction.setAttribute("aria-label", "Call Sitara Group at +91 76150 50099");
+  callAction.innerHTML = "Call <span>+91 76150 50099</span>";
+  navLinks.after(callAction);
+}
+const floatingActions = document.createElement("nav");
+floatingActions.className = "floating-actions";
+floatingActions.setAttribute("aria-label", "Quick contact actions");
+floatingActions.innerHTML = `<a class="floating-action whatsapp-action" href="${sitaraWhatsAppUrl}" target="_blank" rel="noopener" aria-label="WhatsApp Sitara Group"><span class="action-icon" aria-hidden="true">⌁</span><span>WhatsApp</span></a><a class="floating-action call-action" href="${sitaraPhoneUrl}" aria-label="Call Sitara Group at +91 76150 50099"><span class="action-icon" aria-hidden="true">↗</span><span>Call</span></a>`;
+document.body.appendChild(floatingActions);
+
 const header = document.querySelector("[data-header]");
 const menuToggle = document.querySelector(".menu-toggle");
 const navLinks = document.querySelector(".nav-links");
@@ -76,25 +118,23 @@ if (teamGrid) {
 }
 
 const galleryItems = [
-  ["photo", "DS Enclave - Jaipur's Future", "assets/gallery/ds-enclave-gateway.jpeg", "tall"],
-  ["photo", "DS Enclave - Investment Growth", "assets/gallery/ds-enclave-growth.jpeg", ""],
-  ["photo", "DS Enclave - Connected Address", "assets/gallery/ds-enclave-location.jpeg", "wide"],
-  ["photo", "DS Enclave - Build Your Dream", "assets/gallery/ds-enclave-dream.jpeg", "tall"],
-  ["photo", "DS Enclave - Garden Walkway", "assets/projects/project-01.jpg", "tall"],
-  ["photo", "DS Enclave - Temple", "assets/projects/project-02.jpg", ""],
-  ["photo", "DS Enclave - Garden Lawn", "assets/projects/project-03.jpg", "wide"],
-  ["photo", "DS Enclave - Plot Layout", "assets/projects/project-04.jpg", ""],
-  ["photo", "DS Enclave - Landscape Park", "assets/projects/project-05.jpg", "tall"],
-  ["photo", "DS Enclave - Outdoor Gym", "assets/projects/project-06.jpg", ""],
-  ["photo", "DS Enclave - Water Tank View", "assets/projects/project-07.jpg", "wide"],
-  ["photo", "DS Enclave - Main Entrance", "assets/projects/project-08.jpg", ""],
-  ["photo", "DS Enclave - Entry Gate", "assets/projects/project-09.jpg", "tall"],
-  ["photo", "DS Enclave - Shopping Market", "assets/projects/project-10.jpg", ""],
-  ["photo", "DS Enclave - Lotus Fountain", "assets/projects/project-11.jpg", "wide"],
-  ["photo", "Sitara Group - Brand Collateral", "assets/gallery/brand-collateral.jpg", ""],
-  ["video", "Sitara Group - Site Progress", "assets/gallery/IMG_7598.MOV", "wide"],
-  ["video", "DS Enclave - Project Overview", "assets/gallery/ds-enclave-overview.mp4", ""],
-  ["video", "DS Enclave - Latest Update", "assets/gallery/ds-enclave-update.mp4", "wide"]
+  ["photo", "DS Enclave - Jaipur's Future", "/assets/gallery/ds-enclave-gateway.jpeg", "tall"],
+  ["photo", "DS Enclave - Investment Growth", "/assets/gallery/ds-enclave-growth.jpeg", ""],
+  ["photo", "DS Enclave - Connected Address", "/assets/gallery/ds-enclave-location.jpeg", "wide"],
+  ["photo", "DS Enclave - Build Your Dream", "/assets/gallery/ds-enclave-dream.jpeg", "tall"],
+  ["photo", "DS Enclave - Garden Walkway", "/assets/projects/project-01.jpg", "tall"],
+  ["photo", "DS Enclave - Temple", "/assets/projects/project-02.jpg", ""],
+  ["photo", "DS Enclave - Garden Lawn", "/assets/projects/project-03.jpg", "wide"],
+  ["photo", "DS Enclave - Plot Layout", "/assets/projects/project-04.jpg", ""],
+  ["photo", "DS Enclave - Landscape Park", "/assets/projects/project-05.jpg", "tall"],
+  ["photo", "DS Enclave - Outdoor Gym", "/assets/projects/project-06.jpg", ""],
+  ["photo", "DS Enclave - Water Tank View", "/assets/projects/project-07.jpg", "wide"],
+  ["photo", "DS Enclave - Main Entrance", "/assets/projects/project-08.jpg", ""],
+  ["photo", "DS Enclave - Entry Gate", "/assets/projects/project-09.jpg", "tall"],
+  ["photo", "DS Enclave - Shopping Market", "/assets/projects/project-10.jpg", ""],
+  ["photo", "DS Enclave - Lotus Fountain", "/assets/projects/project-11.jpg", "wide"],
+  ["video", "DS Enclave - Project Overview", "/assets/gallery/ds-enclave-overview.mp4", ""],
+  ["video", "DS Enclave - Latest Update", "/assets/gallery/ds-enclave-update.mp4", "wide"]
 ].map(([type, caption, src, size]) => ({ type, caption, src, size }));
 const lightbox = document.querySelector(".lightbox");
 const lightboxImage = lightbox?.querySelector("img");

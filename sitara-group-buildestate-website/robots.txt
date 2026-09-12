@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sitaragroupbuildestate.com/sitemap.xml
+Sitemap: https://www.sitara-group.in/sitemap.xml
