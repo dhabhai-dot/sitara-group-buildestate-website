@@ -14,6 +14,10 @@ const contactActionStyles = document.createElement("link");
 contactActionStyles.rel = "stylesheet";
 contactActionStyles.href = "/contact-actions.css";
 document.head.appendChild(contactActionStyles);
+const mobileResponsiveStyles = document.createElement("link");
+mobileResponsiveStyles.rel = "stylesheet";
+mobileResponsiveStyles.href = "/mobile-responsive.css";
+document.head.appendChild(mobileResponsiveStyles);
 document.body.dataset.page = window.location.pathname.split("/").filter(Boolean).join("-") || "home";
 
 const navLinks = document.querySelector(".nav-links");

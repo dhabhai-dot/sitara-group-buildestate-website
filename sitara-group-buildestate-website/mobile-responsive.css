@@ -1,0 +1,210 @@
+/* Mobile-only safeguards; desktop styles remain unchanged. */
+@media (max-width: 800px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body {
+    overflow-wrap: break-word;
+  }
+
+  .site-header {
+    gap: 12px;
+  }
+
+  .brand {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .brand img {
+    width: 56px;
+    height: 56px;
+    max-width: none;
+    flex: none;
+    object-fit: contain;
+    object-position: center;
+    background: #fff;
+  }
+
+  .site-header.scrolled .brand img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .menu-toggle {
+    flex: none;
+    margin-left: auto;
+  }
+
+  .section-shell,
+  .split-title,
+  .editorial,
+  .contact-section,
+  .leadership-tease,
+  .feature-project,
+  .feature-copy,
+  .feature-media,
+  .project-list article,
+  .leader-profile,
+  .projects-head,
+  .footer-top,
+  .footer-bottom {
+    min-width: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  .hero-copy,
+  .feature-copy,
+  .contact-intro,
+  .rail-card,
+  .team-editorial-card {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-content {
+    max-width: calc(100% - 40px);
+  }
+
+  .hero-actions {
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 16px 20px;
+  }
+
+  .hero-actions .button,
+  .hero-actions .text-link {
+    max-width: 100%;
+  }
+
+  .split-title h2,
+  .projects-head h2,
+  .contact-intro h2,
+  .editorial h2,
+  .leadership-tease h2 {
+    font-size: clamp(40px, 12vw, 62px);
+    line-height: 1.02;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(50px, 14vw, 76px);
+    line-height: .94;
+  }
+
+  .feature-copy h2 {
+    font-size: clamp(56px, 17vw, 78px);
+    line-height: .92;
+  }
+
+  .projects-strip {
+    overflow: visible;
+  }
+
+  .project-rail {
+    width: 100%;
+    max-width: 100%;
+    margin: 35px 0 0;
+    padding: 0 20px 12px;
+    gap: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .project-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail-card {
+    width: auto;
+    height: 420px;
+    min-width: 0;
+    flex: 0 0 min(430px, calc(100vw - 64px));
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .rail-card h3 {
+    right: 18px;
+    font-size: clamp(23px, 7vw, 28px);
+    overflow-wrap: anywhere;
+  }
+
+  .rail-card span {
+    right: 18px;
+    white-space: normal;
+  }
+
+  .leadership-tease > img,
+  .leader-profile > img,
+  .preview-grid,
+  .masonry,
+  .video-gallery-grid,
+  .updates-grid,
+  .footer-top {
+    max-width: 100%;
+  }
+
+  .leadership-tease > img,
+  .leader-profile > img {
+    object-fit: cover;
+  }
+
+  .footer-bottom > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .button,
+  .text-link,
+  .header-call-action {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 360px) {
+  .site-header {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .brand img {
+    width: 52px;
+    height: 52px;
+  }
+
+  .site-header.scrolled .brand img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .hero-content {
+    left: 16px;
+    right: 16px;
+    max-width: calc(100% - 32px);
+  }
+
+  .hero-foot {
+    left: 16px;
+    right: 16px;
+  }
+
+  .project-rail {
+    padding-left: 16px;
+    padding-right: 16px;
+    scroll-padding-left: 16px;
+  }
+
+  .rail-card {
+    flex-basis: calc(100vw - 58px);
+  }
+}
