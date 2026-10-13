@@ -18,6 +18,10 @@ const mobileResponsiveStyles = document.createElement("link");
 mobileResponsiveStyles.rel = "stylesheet";
 mobileResponsiveStyles.href = "/mobile-responsive.css";
 document.head.appendChild(mobileResponsiveStyles);
+const redesignStyles = document.createElement("link");
+redesignStyles.rel = "stylesheet";
+redesignStyles.href = "/redesign.css";
+document.head.appendChild(redesignStyles);
 document.body.dataset.page = window.location.pathname.split("/").filter(Boolean).join("-") || "home";
 
 const navLinks = document.querySelector(".nav-links");
@@ -85,6 +89,53 @@ const observer = new IntersectionObserver(
 
 document.querySelectorAll(".reveal, .stat").forEach((element) => observer.observe(element));
 
+function renderCurrentProjectLaunches() {
+  if (document.body.dataset.page !== "home") return;
+  const featureProject = document.querySelector(".feature-project");
+  if (!featureProject || document.querySelector(".current-projects")) return;
+
+  const section = document.createElement("section");
+  section.className = "current-projects";
+  section.setAttribute("aria-labelledby", "current-projects-title");
+  section.innerHTML = `
+    <div class="section-shell">
+      <p class="eyebrow">Current projects</p>
+      <div class="current-projects-heading">
+        <h2 id="current-projects-title">Now shaping<br><em>what comes next.</em></h2>
+        <p>Discover Sitara Group’s current residential project launches in Jaipur.</p>
+      </div>
+      <div class="launch-project-grid">
+        <article class="launch-project-card">
+          <div class="launch-project-visual project-image-balaji" aria-hidden="true"></div>
+          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Balaji Enclave</h3><a class="text-link dark" href="/contact/">Enquire about this project <span>↗</span></a></div>
+        </article>
+        <article class="launch-project-card">
+          <div class="launch-project-visual project-image-krishna" aria-hidden="true"></div>
+          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Krishna Nikunj II</h3><a class="text-link dark" href="/contact/">Enquire about this project <span>↗</span></a></div>
+        </article>
+      </div>
+    </div>`;
+  featureProject.before(section);
+}
+
+renderCurrentProjectLaunches();
+
+const additionalProjectOptions = [
+  "Shree Balaji Enclave",
+  "Shree Krishna Nikunj II",
+  "A Secret Project — Coming Soon"
+];
+
+document.querySelectorAll('select[name="projectInterest"]').forEach((select) => {
+  additionalProjectOptions.forEach((projectName) => {
+    if ([...select.options].some((option) => option.value === projectName)) return;
+    const option = document.createElement("option");
+    option.value = projectName;
+    option.textContent = projectName;
+    select.insertBefore(option, [...select.options].find((item) => item.value === "General Site Visit") || null);
+  });
+});
+
 function animateCounter(stat) {
   const number = stat.querySelector("[data-count]");
   if (!number || number.dataset.done) return;
@@ -138,7 +189,24 @@ const galleryItems = [
   ["photo", "DS Enclave - Shopping Market", "/assets/projects/project-10.jpg", ""],
   ["photo", "DS Enclave - Lotus Fountain", "/assets/projects/project-11.jpg", "wide"],
   ["video", "DS Enclave - Project Overview", "/assets/gallery/ds-enclave-overview.mp4", ""],
-  ["video", "DS Enclave - Latest Update", "/assets/gallery/ds-enclave-update.mp4", "wide"]
+  ["video", "DS Enclave - Latest Update", "/assets/gallery/ds-enclave-update.mp4", "wide"],
+  ["photo", "Shree Krishna Nikunj II - Location Update", "/assets/gallery/shree-krishna-nikunj-ii-location.jpeg", "tall"],
+  ["photo", "Shree Krishna Nikunj II - A Location for Tomorrow", "/assets/gallery/shree-krishna-nikunj-ii-tomorrow.jpeg", ""],
+  ["photo", "Shree Krishna Nikunj II - Site Plan", "/assets/gallery/shree-krishna-nikunj-ii-site-plan.jpeg", "wide"],
+  ["photo", "Sitara Anupam Residency - Campaign", "/assets/gallery/anupam-residency-campaign.jpeg", "tall"],
+  ["photo", "Shree Balaji Enclave - Launch Update", "/assets/gallery/shree-balaji-enclave-launch.jpeg", ""],
+  ["photo", "Shree Balaji Enclave - Campaign", "/assets/gallery/shree-balaji-enclave-campaign.jpeg", "tall"],
+  ["photo", "Shree Balaji Enclave - Project Update", "/assets/gallery/shree-balaji-enclave-update.jpeg", ""],
+  ["photo", "Sitara Anupam Residency - Launch", "/assets/gallery/anupam-residency-launch.jpeg", "wide"],
+  ["photo", "Sitara Group - Upcoming Jaipur Announcement", "/assets/gallery/jaipur-upcoming-announcement.jpeg", "tall"],
+  ["photo", "Shree Krishna Nikunj II - Connectivity", "/assets/gallery/shree-krishna-nikunj-ii-connectivity.jpeg", ""],
+  ["photo", "Shree Krishna Nikunj II - Master Plan", "/assets/gallery/shree-krishna-nikunj-ii-master-plan.jpeg", "tall"],
+  ["photo", "Shree Krishna Nikunj II - Launch", "/assets/gallery/shree-krishna-nikunj-ii-launch.jpeg", ""],
+  ["photo", "Shree Krishna Nikunj II - Gateway", "/assets/gallery/shree-krishna-nikunj-ii-gateway.jpeg", "tall"],
+  ["video", "Sitara Group - Site Update 01", "/assets/gallery/site-update-01.mp4", "wide"],
+  ["video", "Sitara Group - Site Update 02", "/assets/gallery/site-update-02.mp4", ""],
+  ["video", "Sitara Group - Office Update", "/assets/gallery/sitara-office-update.mp4", "wide"],
+  ["video", "Sitara Group - Team Meet", "/assets/gallery/sitara-team-meet.mp4", ""]
 ].map(([type, caption, src, size]) => ({ type, caption, src, size }));
 const lightbox = document.querySelector(".lightbox");
 const lightboxImage = lightbox?.querySelector("img");
