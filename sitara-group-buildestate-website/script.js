@@ -22,6 +22,10 @@ const redesignStyles = document.createElement("link");
 redesignStyles.rel = "stylesheet";
 redesignStyles.href = "/redesign.css";
 document.head.appendChild(redesignStyles);
+const uiFixStyles = document.createElement("link");
+uiFixStyles.rel = "stylesheet";
+uiFixStyles.href = "/ui-fixes.css";
+document.head.appendChild(uiFixStyles);
 document.body.dataset.page = window.location.pathname.split("/").filter(Boolean).join("-") || "home";
 
 const navLinks = document.querySelector(".nav-links");
@@ -107,11 +111,11 @@ function renderCurrentProjectLaunches() {
       <div class="launch-project-grid">
         <article class="launch-project-card">
           <div class="launch-project-visual project-image-balaji" aria-hidden="true"></div>
-          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Balaji Enclave</h3><a class="text-link dark" href="/contact/">Enquire about this project <span>↗</span></a></div>
+          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Balaji Enclave</h3><a class="text-link dark" href="/projects/shree-balaji-enclave/">Explore project <span>↗</span></a></div>
         </article>
         <article class="launch-project-card">
           <div class="launch-project-visual project-image-krishna" aria-hidden="true"></div>
-          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Krishna Nikunj II</h3><a class="text-link dark" href="/contact/">Enquire about this project <span>↗</span></a></div>
+          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Krishna Nikunj II</h3><a class="text-link dark" href="/projects/shree-krishna-nikunj-ii/">Explore project <span>↗</span></a></div>
         </article>
       </div>
     </div>`;
@@ -119,6 +123,81 @@ function renderCurrentProjectLaunches() {
 }
 
 renderCurrentProjectLaunches();
+
+const projectDetailContent = {
+  "/projects/ds-enclave/": {
+    name: "DS Enclave",
+    description: "Discover DS Enclave by Sitara Group Buildestate, a residential plotting project located at Main Diggi Road, Balawala, Jaipur. Explore the project location, available information and connectivity to understand whether it suits your future home or property plans.",
+    location: "Main Diggi Road, Balawala, Jaipur, Rajasthan",
+    connectivity: "For the latest location guidance and connectivity information, speak directly with the Sitara Group team.",
+    details: ["Residential plots", "Current plot availability on request", "Project status to be confirmed", "Project documents on request"],
+    note: "Exact plot sizes, road widths, amenities, pricing and approvals are subject to official project confirmation."
+  },
+  "/projects/shree-balaji-enclave/": {
+    name: "Shree Balaji Enclave",
+    description: "Shree Balaji Enclave by Sitara Group Buildestate is a residential plotting project in Kalwada, near Mahindra SEZ on Ajmer Road, Jaipur. The project is planned for people looking to explore residential plot ownership in Jaipur's developing areas.",
+    location: "Kalwada, Mahindra SEZ, Ajmer Road, Jaipur",
+    connectivity: "Project information highlights access around the Mahindra SEZ and Ajmer Road area.",
+    details: ["Residential plots", "111.11 sq. yd. plot size", "100 ft and 80 ft roads", "Gated township"],
+    note: "Current availability, pricing and final project specifications should be confirmed directly with Sitara Group."
+  },
+  "/projects/shree-krishna-nikunj-ii/": {
+    name: "Shree Krishna Nikunj II",
+    description: "Shree Krishna Nikunj II by Sitara Group Buildestate is a residential plotting project on Ajmer Road, Jaipur. Explore the project's location, connectivity and available property details to understand its suitability for your residential plans.",
+    location: "Ajmer Road, Jaipur",
+    connectivity: "Current project information refers to the Mahindra SEZ adjoining area and Ring Road proximity. Please confirm the latest location and connectivity details with the Sitara Group team.",
+    details: ["Residential plots", "Mahindra SEZ adjoining area", "Ring Road proximity", "Master-plan information on request"],
+    note: "Distances, proposed development references, availability, pricing and taxes are subject to official confirmation."
+  }
+};
+
+const currentProjectDetail = projectDetailContent[window.location.pathname];
+if (currentProjectDetail) {
+  const detailSection = document.createElement("section");
+  detailSection.className = "project-information section-shell";
+  detailSection.innerHTML = `
+    <div class="project-information-heading"><p class="eyebrow">Project information</p><h2>Details that help you<br><em>decide clearly.</em></h2></div>
+    <div class="project-information-content"><p>${currentProjectDetail.description}</p><div class="project-information-grid"><article><span>Location</span><strong>${currentProjectDetail.location}</strong></article><article><span>Connectivity</span><strong>${currentProjectDetail.connectivity}</strong></article><article><span>Project details</span><strong>${currentProjectDetail.details.join(" · ")}</strong></article></div><p class="project-information-note">${currentProjectDetail.note}</p><a class="button button-dark" href="/contact/">Request project information ↗</a></div>`;
+  document.querySelector("main")?.append(detailSection);
+  if (window.location.pathname === "/projects/ds-enclave/") {
+    const heroStatus = document.querySelector(".project-hero .eyebrow");
+    if (heroStatus) heroStatus.textContent = "Sitara Group Project";
+  }
+}
+
+document.querySelectorAll(".rail-card, .project-list article").forEach((card) => {
+  if (!card.textContent.includes("DS Enclave")) return;
+  const status = card.querySelector("span, .eyebrow");
+  if (status) status.textContent = "Status to be confirmed";
+});
+
+const homeHero = document.querySelector(".hero");
+const homeHeroImage = document.querySelector(".hero-image");
+if (homeHero && homeHeroImage) {
+  const heroSlides = [
+    "/assets/projects/project-04.jpg",
+    "/assets/projects/project-05.jpg",
+    "/assets/projects/project-06.jpg",
+    "/assets/projects/project-07.jpg"
+  ];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let activeSlide = 0;
+  const transitionLayer = document.createElement("div");
+  transitionLayer.className = "hero-slide-next";
+  homeHero.insertBefore(transitionLayer, homeHero.querySelector(".hero-scrim"));
+  homeHeroImage.style.backgroundImage = `url('${heroSlides[activeSlide]}')`;
+  if (!reduceMotion) {
+    window.setInterval(() => {
+      activeSlide = (activeSlide + 1) % heroSlides.length;
+      transitionLayer.style.backgroundImage = `url('${heroSlides[activeSlide]}')`;
+      transitionLayer.classList.add("is-visible");
+      window.setTimeout(() => {
+        homeHeroImage.style.backgroundImage = `url('${heroSlides[activeSlide]}')`;
+        transitionLayer.classList.remove("is-visible");
+      }, 850);
+    }, 5600);
+  }
+}
 
 const additionalProjectOptions = [
   "Shree Balaji Enclave",
@@ -269,7 +348,7 @@ document.querySelectorAll("[data-gallery-tab]").forEach((tab) => tab.addEventLis
   document.querySelectorAll("[data-gallery-tab]").forEach((button) => { const active = button === tab; button.classList.toggle("active", active); button.setAttribute("aria-selected", String(active)); });
   document.querySelectorAll("[data-gallery-panel]").forEach((panel) => { const active = panel.dataset.galleryPanel === type; panel.hidden = !active; panel.classList.toggle("active", active); });
 }));
-renderGallery();
+if (document.querySelector("[data-gallery-grid]")) renderGallery();
 
 const contactForm = document.querySelector(".contact-form");
 const requiredMessages = {
