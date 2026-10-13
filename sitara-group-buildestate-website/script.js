@@ -152,7 +152,7 @@ const projectDetailContent = {
 };
 
 const currentProjectDetail = projectDetailContent[window.location.pathname];
-if (currentProjectDetail) {
+if (currentProjectDetail && !document.querySelector(".project-information")) {
   const detailSection = document.createElement("section");
   detailSection.className = "project-information section-shell";
   detailSection.innerHTML = `
