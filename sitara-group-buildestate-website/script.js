@@ -1,0 +1,456 @@
+document.body.dataset.page = window.location.pathname.split("/").filter(Boolean).join("-") || "home";
+
+const navLinks = document.querySelector(".nav-links");
+const sitaraPhoneUrl = "tel:+917615050099";
+const sitaraWhatsAppUrl = "https://wa.me/917615050099?text=Hello%20Sitara%20Group%20Buildestate%2C%20I%20would%20like%20to%20know%20more%20about%20your%20residential%20projects.";
+const headerCta = document.querySelector(".nav-cta");
+if (headerCta) {
+  const callAction = document.createElement("a");
+  callAction.className = "header-call-action";
+  callAction.href = sitaraPhoneUrl;
+  callAction.setAttribute("aria-label", "Call Sitara Group at +91 76150 50099");
+  callAction.innerHTML = "Call <span>+91 76150 50099</span>";
+  headerCta.before(callAction);
+} else if (navLinks) {
+  const callAction = document.createElement("a");
+  callAction.className = "header-call-action";
+  callAction.href = sitaraPhoneUrl;
+  callAction.setAttribute("aria-label", "Call Sitara Group at +91 76150 50099");
+  callAction.innerHTML = "Call <span>+91 76150 50099</span>";
+  navLinks.after(callAction);
+}
+const floatingActions = document.createElement("nav");
+floatingActions.className = "floating-actions";
+floatingActions.setAttribute("aria-label", "Quick contact actions");
+floatingActions.innerHTML = `<a class="floating-action whatsapp-action" href="${sitaraWhatsAppUrl}" target="_blank" rel="noopener" aria-label="WhatsApp Sitara Group"><span class="action-icon" aria-hidden="true">⌁</span><span>WhatsApp</span></a><a class="floating-action call-action" href="${sitaraPhoneUrl}" aria-label="Call Sitara Group at +91 76150 50099"><span class="action-icon" aria-hidden="true">↗</span><span>Call</span></a>`;
+document.body.appendChild(floatingActions);
+
+const header = document.querySelector("[data-header]");
+const menuToggle = document.querySelector(".menu-toggle");
+
+function syncHeader() {
+  if (!header) return;
+  header.classList.toggle("scrolled", window.scrollY > 40);
+}
+window.addEventListener("scroll", syncHeader, { passive: true });
+syncHeader();
+
+if (header && menuToggle && navLinks) {
+  menuToggle.addEventListener("click", () => {
+    const isOpen = header.classList.toggle("menu-open");
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+    menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+  });
+
+  navLinks.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      header.classList.remove("menu-open");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Open menu");
+    });
+  });
+}
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        if (entry.target.classList.contains("stat")) animateCounter(entry.target);
+      }
+    });
+  },
+  { threshold: 0.16 }
+);
+
+document.querySelectorAll(".reveal, .stat").forEach((element) => observer.observe(element));
+
+function renderCurrentProjectLaunches() {
+  if (document.body.dataset.page !== "home") return;
+  const featureProject = document.querySelector(".feature-project");
+  if (!featureProject || document.querySelector(".current-projects")) return;
+
+  const section = document.createElement("section");
+  section.className = "current-projects";
+  section.setAttribute("aria-labelledby", "current-projects-title");
+  section.innerHTML = `
+    <div class="section-shell">
+      <p class="eyebrow">Current projects</p>
+      <div class="current-projects-heading">
+        <h2 id="current-projects-title">Now shaping<br><em>what comes next.</em></h2>
+        <p>Discover Sitara Group’s current residential project launches in Jaipur.</p>
+      </div>
+      <div class="launch-project-grid">
+        <article class="launch-project-card">
+          <div class="launch-project-visual project-image-balaji" aria-hidden="true"></div>
+          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Balaji Enclave</h3><a class="text-link dark" href="/projects/shree-balaji-enclave/">Explore project <span>↗</span></a></div>
+        </article>
+        <article class="launch-project-card">
+          <div class="launch-project-visual project-image-krishna" aria-hidden="true"></div>
+          <div class="launch-project-content"><p class="project-status">Current project · New launch</p><h3>Shree Krishna Nikunj II</h3><a class="text-link dark" href="/projects/shree-krishna-nikunj-ii/">Explore project <span>↗</span></a></div>
+        </article>
+      </div>
+    </div>`;
+  featureProject.before(section);
+}
+
+renderCurrentProjectLaunches();
+
+const projectDetailContent = {
+  "/projects/ds-enclave/": {
+    name: "DS Enclave",
+    description: "Discover DS Enclave by Sitara Group Buildestate, a residential plotting project located at Main Diggi Road, Balawala, Jaipur. Explore the project location, available information and connectivity to understand whether it suits your future home or property plans.",
+    location: "Main Diggi Road, Balawala, Jaipur, Rajasthan",
+    connectivity: "For the latest location guidance and connectivity information, speak directly with the Sitara Group team.",
+    details: ["Residential plots", "Current plot availability on request", "Project status to be confirmed", "Project documents on request"],
+    note: "Exact plot sizes, road widths, amenities, pricing and approvals are subject to official project confirmation."
+  },
+  "/projects/shree-balaji-enclave/": {
+    name: "Shree Balaji Enclave",
+    description: "Shree Balaji Enclave by Sitara Group Buildestate is a residential plotting project in Kalwada, near Mahindra SEZ on Ajmer Road, Jaipur. The project is planned for people looking to explore residential plot ownership in Jaipur's developing areas.",
+    location: "Kalwada, Mahindra SEZ, Ajmer Road, Jaipur",
+    connectivity: "Project information highlights access around the Mahindra SEZ and Ajmer Road area.",
+    details: ["Residential plots", "111.11 sq. yd. plot size", "100 ft and 80 ft roads", "Gated township"],
+    note: "Current availability, pricing and final project specifications should be confirmed directly with Sitara Group."
+  },
+  "/projects/shree-krishna-nikunj-ii/": {
+    name: "Shree Krishna Nikunj II",
+    description: "Shree Krishna Nikunj II by Sitara Group Buildestate is a residential plotting project on Ajmer Road, Jaipur. Explore the project's location, connectivity and available property details to understand its suitability for your residential plans.",
+    location: "Ajmer Road, Jaipur",
+    connectivity: "Current project information refers to the Mahindra SEZ adjoining area and Ring Road proximity. Please confirm the latest location and connectivity details with the Sitara Group team.",
+    details: ["Residential plots", "Mahindra SEZ adjoining area", "Ring Road proximity", "Master-plan information on request"],
+    note: "Distances, proposed development references, availability, pricing and taxes are subject to official confirmation."
+  }
+};
+
+const currentProjectDetail = projectDetailContent[window.location.pathname];
+if (currentProjectDetail && !document.querySelector(".project-information")) {
+  const detailSection = document.createElement("section");
+  detailSection.className = "project-information section-shell";
+  detailSection.innerHTML = `
+    <div class="project-information-heading"><p class="eyebrow">Project information</p><h2>Details that help you<br><em>decide clearly.</em></h2></div>
+    <div class="project-information-content"><p>${currentProjectDetail.description}</p><div class="project-information-grid"><article><span>Location</span><strong>${currentProjectDetail.location}</strong></article><article><span>Connectivity</span><strong>${currentProjectDetail.connectivity}</strong></article><article><span>Project details</span><strong>${currentProjectDetail.details.join(" · ")}</strong></article></div><p class="project-information-note">${currentProjectDetail.note}</p><a class="button button-dark" href="/contact/">Request project information ↗</a></div>`;
+  document.querySelector("main")?.append(detailSection);
+  if (window.location.pathname === "/projects/ds-enclave/") {
+    const heroStatus = document.querySelector(".project-hero .eyebrow");
+    if (heroStatus) heroStatus.textContent = "Sitara Group Project";
+  }
+}
+
+document.querySelectorAll(".rail-card, .project-list article").forEach((card) => {
+  if (!card.textContent.includes("DS Enclave")) return;
+  const status = card.querySelector("span, .eyebrow");
+  if (status) status.textContent = "Status to be confirmed";
+});
+
+const homeHero = document.querySelector(".hero");
+const homeHeroImage = document.querySelector(".hero-image");
+if (homeHero && homeHeroImage) {
+  const heroSlides = [
+    "/assets/projects/project-04.jpg",
+    "/assets/projects/project-05.jpg",
+    "/assets/projects/project-06.jpg",
+    "/assets/projects/project-07.jpg"
+  ];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let activeSlide = 0;
+  const transitionLayer = document.createElement("div");
+  transitionLayer.className = "hero-slide-next";
+  homeHero.insertBefore(transitionLayer, homeHero.querySelector(".hero-scrim"));
+  homeHeroImage.style.backgroundImage = `url('${heroSlides[activeSlide]}')`;
+  if (!reduceMotion) {
+    window.setInterval(() => {
+      activeSlide = (activeSlide + 1) % heroSlides.length;
+      transitionLayer.style.backgroundImage = `url('${heroSlides[activeSlide]}')`;
+      transitionLayer.classList.add("is-visible");
+      window.setTimeout(() => {
+        homeHeroImage.style.backgroundImage = `url('${heroSlides[activeSlide]}')`;
+        transitionLayer.classList.remove("is-visible");
+      }, 850);
+    }, 5600);
+  }
+}
+
+const additionalProjectOptions = [
+  "Shree Balaji Enclave",
+  "Shree Krishna Nikunj II",
+  "A Secret Project — Coming Soon"
+];
+
+document.querySelectorAll('select[name="projectInterest"]').forEach((select) => {
+  additionalProjectOptions.forEach((projectName) => {
+    if ([...select.options].some((option) => option.value === projectName)) return;
+    const option = document.createElement("option");
+    option.value = projectName;
+    option.textContent = projectName;
+    select.insertBefore(option, [...select.options].find((item) => item.value === "General Site Visit") || null);
+  });
+});
+
+function animateCounter(stat) {
+  const number = stat.querySelector("[data-count]");
+  if (!number || number.dataset.done) return;
+  number.dataset.done = "true";
+  const target = Number(number.dataset.count || 0);
+  const duration = 1400;
+  const start = performance.now();
+
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    number.textContent = `${Math.round(target * eased)}+`;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const team = [
+  { name: "Mohit Jarodhia", group: "Team Eagle", image: "assets/team/mohit-jarodhia.jpg", position: "50% 18%", description: "Customer guidance with sharp project knowledge and disciplined follow-up." },
+  { name: "Vikas Sharma", group: "Team Rise", image: "assets/team/vikas-sharma.jpg", position: "50% 18%", description: "Growth-focused advisory for families and first-time plot buyers." },
+  { name: "Suraj Gurjar", group: "Team Diamond", image: "assets/team/suraj-gurjar.jpg", position: "50% 26%", description: "Premium client service with clarity around location and value." },
+  { name: "Dayal Gurjar", group: "Team Platinum", image: "assets/team/dayal-gurjar.jpg", position: "52% 12%", description: "Reliable coordination for site visits, documents and booking support." },
+  { name: "Deepak Sharma", group: "Team Star", image: "assets/team/deepak-sharma.jpg", position: "50% 44%", description: "Warm, detail-led assistance for project comparisons and next steps." },
+  { name: "Mohit Sharma", group: "Team Panther", image: "assets/team/mohit-sharma.jpg", position: "58% 14%", description: "Fast, focused support for active enquiries and investment decisions." },
+  { name: "Sawan Sain", group: "Team Blaster", image: "assets/team/sawan-sain.jpg", position: "50% 20%", description: "Energetic project communication and responsive customer handling." },
+  { name: "Ramkesh Gurjar", group: "Team Royal", image: "assets/team/ramkesh-gurjar.jpg", position: "50% 18%", description: "Professional relationship management for long-term customer confidence." },
+  { name: "Mahesh Gurjar", group: "Team Tiger", image: "assets/team/mahesh-gurjar.jpg", position: "50% 16%", description: "Strong field coordination and site-level project understanding." }
+];
+const teamGrid = document.querySelector("#teamGrid");
+if (teamGrid) {
+  teamGrid.innerHTML = team.map(({ name, group, image, position, description }) => {
+    return `<article class="team-card reveal"><div class="team-portrait"><img src="${image}" alt="${name} - ${group}" loading="lazy" style="--face-position: ${position};" /></div><h3>${name}</h3><span>${group}</span><p>${description}</p></article>`;
+  }).join("");
+  teamGrid.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+}
+
+const galleryItems = [
+  ["photo", "DS Enclave - Jaipur's Future", "/assets/gallery/ds-enclave-gateway.jpeg", "tall"],
+  ["photo", "DS Enclave - Investment Growth", "/assets/gallery/ds-enclave-growth.jpeg", ""],
+  ["photo", "DS Enclave - Connected Address", "/assets/gallery/ds-enclave-location.jpeg", "wide"],
+  ["photo", "DS Enclave - Build Your Dream", "/assets/gallery/ds-enclave-dream.jpeg", "tall"],
+  ["photo", "DS Enclave - Garden Walkway", "/assets/projects/project-01.jpg", "tall"],
+  ["photo", "DS Enclave - Temple", "/assets/projects/project-02.jpg", ""],
+  ["photo", "DS Enclave - Garden Lawn", "/assets/projects/project-03.jpg", "wide"],
+  ["photo", "DS Enclave - Plot Layout", "/assets/projects/project-04.jpg", ""],
+  ["photo", "DS Enclave - Landscape Park", "/assets/projects/project-05.jpg", "tall"],
+  ["photo", "DS Enclave - Outdoor Gym", "/assets/projects/project-06.jpg", ""],
+  ["photo", "DS Enclave - Water Tank View", "/assets/projects/project-07.jpg", "wide"],
+  ["photo", "DS Enclave - Main Entrance", "/assets/projects/project-08.jpg", ""],
+  ["photo", "DS Enclave - Entry Gate", "/assets/projects/project-09.jpg", "tall"],
+  ["photo", "DS Enclave - Shopping Market", "/assets/projects/project-10.jpg", ""],
+  ["photo", "DS Enclave - Lotus Fountain", "/assets/projects/project-11.jpg", "wide"],
+  ["video", "DS Enclave - Project Overview", "/assets/gallery/ds-enclave-overview.mp4", ""],
+  ["video", "DS Enclave - Latest Update", "/assets/gallery/ds-enclave-update.mp4", "wide"],
+  ["photo", "Shree Krishna Nikunj II - Location Update", "/assets/gallery/shree-krishna-nikunj-ii-location.jpeg", "tall"],
+  ["photo", "Shree Krishna Nikunj II - A Location for Tomorrow", "/assets/gallery/shree-krishna-nikunj-ii-tomorrow.jpeg", ""],
+  ["photo", "Shree Krishna Nikunj II - Site Plan", "/assets/gallery/shree-krishna-nikunj-ii-site-plan.jpeg", "wide"],
+  ["photo", "Sitara Anupam Residency - Campaign", "/assets/gallery/anupam-residency-campaign.jpeg", "tall"],
+  ["photo", "Shree Balaji Enclave - Launch Update", "/assets/gallery/shree-balaji-enclave-launch.jpeg", ""],
+  ["photo", "Shree Balaji Enclave - Campaign", "/assets/gallery/shree-balaji-enclave-campaign.jpeg", "tall"],
+  ["photo", "Shree Balaji Enclave - Project Update", "/assets/gallery/shree-balaji-enclave-update.jpeg", ""],
+  ["photo", "Sitara Anupam Residency - Launch", "/assets/gallery/anupam-residency-launch.jpeg", "wide"],
+  ["photo", "Sitara Group - Upcoming Jaipur Announcement", "/assets/gallery/jaipur-upcoming-announcement.jpeg", "tall"],
+  ["photo", "Shree Krishna Nikunj II - Connectivity", "/assets/gallery/shree-krishna-nikunj-ii-connectivity.jpeg", ""],
+  ["photo", "Shree Krishna Nikunj II - Master Plan", "/assets/gallery/shree-krishna-nikunj-ii-master-plan.jpeg", "tall"],
+  ["photo", "Shree Krishna Nikunj II - Launch", "/assets/gallery/shree-krishna-nikunj-ii-launch.jpeg", ""],
+  ["photo", "Shree Krishna Nikunj II - Gateway", "/assets/gallery/shree-krishna-nikunj-ii-gateway.jpeg", "tall"],
+  ["video", "Sitara Group - Site Update 01", "/assets/gallery/site-update-01.mp4", "wide"],
+  ["video", "Sitara Group - Site Update 02", "/assets/gallery/site-update-02.mp4", ""],
+  ["video", "Sitara Group - Office Update", "/assets/gallery/sitara-office-update.mp4", "wide"],
+  ["video", "Sitara Group - Team Meet", "/assets/gallery/sitara-team-meet.mp4", ""]
+].map(([type, caption, src, size]) => ({ type, caption, src, size }));
+const lightbox = document.querySelector(".lightbox");
+const lightboxImage = lightbox?.querySelector("img");
+const lightboxVideo = lightbox?.querySelector("video");
+const lightboxCaption = lightbox?.querySelector("figcaption");
+const lightboxClose = lightbox?.querySelector("button");
+
+function renderGallery() {
+  ["photo", "video"].forEach((type) => {
+    const grid = document.querySelector(`[data-gallery-grid="${type}"]`);
+    const empty = document.querySelector(`[data-gallery-empty="${type}"]`);
+    if (!grid || !empty) return;
+    grid.replaceChildren();
+    const items = galleryItems.filter((item) => item.type === type);
+    empty.hidden = items.length > 0;
+    items.forEach((item, index) => grid.appendChild(createGalleryCard(item, index)));
+  });
+}
+function createGalleryCard(item, index) {
+  const card = document.createElement("button");
+  card.type = "button";
+  card.className = `gallery-card ${item.size || (index % 5 === 0 ? "tall" : "")}`;
+  card.setAttribute("aria-label", `Open gallery item: ${item.caption}`);
+  const src = item.src;
+  if (item.type === "video") {
+    const video = document.createElement("video");
+    video.src = src; video.preload = "metadata"; video.muted = true; video.playsInline = true;
+    const marker = document.createElement("span"); marker.className = "video-marker"; marker.textContent = "▶"; card.append(video, marker);
+  } else {
+    const image = document.createElement("img"); image.src = src; image.alt = item.caption; image.loading = "lazy"; card.appendChild(image);
+  }
+  const caption = document.createElement("figcaption"); caption.textContent = item.caption; card.appendChild(caption);
+  card.addEventListener("click", () => openLightbox(item));
+  return card;
+}
+function openLightbox(item) {
+  if (!lightbox || !lightboxImage || !lightboxVideo || !lightboxCaption) return;
+  const source = item.src;
+  const title = item.caption;
+  lightbox.classList.toggle("show-video", item.type === "video");
+  if (item.type === "video") { lightboxVideo.src = source; lightboxVideo.play().catch(() => {}); }
+  else { lightboxImage.src = source; lightboxImage.alt = title; }
+  lightboxCaption.textContent = title;
+  lightbox.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeLightbox() {
+  lightbox?.classList.remove("open", "show-video");
+  if (lightboxVideo) { lightboxVideo.pause(); lightboxVideo.removeAttribute("src"); lightboxVideo.load(); }
+  document.body.style.overflow = "";
+}
+lightboxClose?.addEventListener("click", closeLightbox);
+lightbox?.addEventListener("click", (event) => { if (event.target === lightbox) closeLightbox(); });
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeLightbox();
+});
+
+document.querySelectorAll("[data-gallery-tab]").forEach((tab) => tab.addEventListener("click", () => {
+  const type = tab.dataset.galleryTab;
+  document.querySelectorAll("[data-gallery-tab]").forEach((button) => { const active = button === tab; button.classList.toggle("active", active); button.setAttribute("aria-selected", String(active)); });
+  document.querySelectorAll("[data-gallery-panel]").forEach((panel) => { const active = panel.dataset.galleryPanel === type; panel.hidden = !active; panel.classList.toggle("active", active); });
+}));
+if (document.querySelector("[data-gallery-grid]")) renderGallery();
+
+const contactForm = document.querySelector(".contact-form");
+const requiredMessages = {
+  fullName: "Name is required.",
+  phone: "Valid phone number is required.",
+  email: "Valid email address is required.",
+  projectInterest: "Select a project interest.",
+  enquiryType: "Select an enquiry type.",
+  message: "Message must be at least 10 characters.",
+  budget: "Budget range is required.",
+  timeline: "Visit timeline is required."
+};
+
+if (contactForm) {
+  const submitButton = contactForm.querySelector("button");
+  const formStatus = document.createElement("p");
+  formStatus.className = "form-status";
+  formStatus.setAttribute("role", "status");
+  contactForm.appendChild(formStatus);
+
+  contactForm.addEventListener("input", (event) => {
+    const field = event.target;
+    if (field.name) clearFieldError(field);
+  });
+
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearFieldErrors(contactForm);
+    formStatus.textContent = "";
+    formStatus.classList.remove("error", "success");
+
+    const clientErrors = validateContactForm(contactForm);
+    if (Object.keys(clientErrors).length > 0) {
+      showFieldErrors(contactForm, clientErrors);
+      formStatus.textContent = "Please check the highlighted fields.";
+      formStatus.classList.add("error");
+      return;
+    }
+
+    const formData = new FormData(contactForm);
+    if (formData.get("companyWebsite")) return;
+
+    const payload = {
+      name: formData.get("fullName"),
+      phone: formData.get("phone"),
+      email: formData.get("email"),
+      project: formData.get("projectInterest"),
+      budget: formData.get("budget"),
+      message: formData.get("message"),
+      enquiry_type: formData.get("enquiryType"),
+      timeline: formData.get("timeline"),
+      source_page: window.location.href
+    };
+
+    const duplicateKey = `sitara-lead-${payload.email}-${payload.phone}`.toLowerCase();
+    const lastSubmittedAt = Number(localStorage.getItem(duplicateKey) || 0);
+    if (Date.now() - lastSubmittedAt < 5 * 60 * 1000) {
+      formStatus.textContent = "This enquiry was already submitted. Our team will contact you shortly.";
+      formStatus.classList.add("success");
+      return;
+    }
+
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    try {
+      const response = await fetch("/api/submit-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.ok) {
+        if (result.errors) showFieldErrors(contactForm, mapServerErrors(result.errors));
+        throw new Error(result.message || "Unable to submit right now. Please try again shortly.");
+      }
+
+      localStorage.setItem(duplicateKey, String(Date.now()));
+      contactForm.reset();
+      formStatus.textContent = "Thank you! Our team will contact you shortly.";
+      formStatus.classList.add("success");
+    } catch (error) {
+      formStatus.textContent = error.message || "Unable to submit right now. Please try again shortly.";
+      formStatus.classList.add("error");
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  });
+}
+
+function mapServerErrors(errors) {
+  const fieldMap = { name: "fullName", project: "projectInterest" };
+  return Object.fromEntries(Object.entries(errors).map(([name, message]) => [fieldMap[name] || name, message]));
+}
+function validateContactForm(form) {
+  const errors = {};
+  Array.from(form.elements).forEach((field) => {
+    if (!field.name || field.name === "companyWebsite") return;
+    if (!field.checkValidity()) errors[field.name] = requiredMessages[field.name] || field.validationMessage;
+  });
+  return errors;
+}
+
+function clearFieldErrors(form) {
+  form.querySelectorAll(".field-error").forEach((element) => element.remove());
+  form.querySelectorAll(".has-error").forEach((element) => element.classList.remove("has-error"));
+}
+
+function clearFieldError(field) {
+  const label = field.closest("label");
+  if (!label) return;
+  label.classList.remove("has-error");
+  label.querySelectorAll(".field-error").forEach((element) => element.remove());
+}
+
+function showFieldErrors(form, fields) {
+  Object.entries(fields).forEach(([name, message]) => {
+    const field = form.elements.namedItem(name);
+    if (!field || name === "companyWebsite") return;
+    const label = field.closest("label");
+    if (!label) return;
+    label.classList.add("has-error");
+    const error = document.createElement("small");
+    error.className = "field-error";
+    error.textContent = message;
+    label.appendChild(error);
+  });
+}
+
+
